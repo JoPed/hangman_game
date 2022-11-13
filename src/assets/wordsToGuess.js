@@ -1,0 +1,1 @@
+export const wordsToGuess = ["web", "frontend", "react", "vue", "html", "css", "scss", "javascript", "jsx", "angular", "bootstrap", "responsive design", "typescript", "frontend development"]; 
