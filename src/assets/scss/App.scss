@@ -81,9 +81,28 @@ p, label {
 
 }
 
+#playAgain{
+    display: block;
+    width: 100px;
+    height: 30px;
+    margin: 25px auto 15px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #F2F2F0;
+    background-color: transparent;
+    border: 2px solid #F2F2F0;
+    appearance: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover{
+        background-color: rgba(#A67153, .5);
+    }
+}
+
 
 #wrongGuessesLabel{
-    margin-top: 25px;
+    margin-top: 15px;
     display: block;
 }
 

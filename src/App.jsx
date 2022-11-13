@@ -16,28 +16,30 @@ function App() {
 
   const [wrongGuesses, setWrongGuesses] = useState([]);
 
+  const [isGameOver, setIsGameOver] = useState(false)
+
+
   const guessInputRef = useRef();
 
   const correctLetterRef = useRef([]);
 
   let guess = "";
 
-  let correctLetter = "";
-
-  // += 1 for every correct guessed letter.
   let countCorrectGuess = 0;
-
 
   const winCheck = () => {
 
+    console.log("countCorrectGuess", countCorrectGuess);
+    console.log("word length", word.length);
+
     if (countCorrectGuess === word.length) {
-
-      console.log("you win");
-
+      setIsGameOver(true);
     }
   }
 
   const resetGame = (setNewWord) => {
+
+    setIsGameOver(false);
 
     if (setNewWord) {
       setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
@@ -48,33 +50,41 @@ function App() {
     guessInputRef.current.value = "";
 
 
-    if (correctLetterRef.current > 0) {
-      correctLetterRef.current.forEach(letter => letter.textContent = "");
-    }
+    console.log("correctLetterRef før reset",correctLetterRef.current);
+
+
+    correctLetterRef.current.forEach((char, index) => {
+
+      correctLetterRef = {};
+      console.log(correctLetterRef);
+      char.textContent = "";
+
+    });
+
+    console.log("correctLetterRef efter reset",correctLetterRef.current);
+
 
     setWrongGuesses([]);
+    // console.log("setwrongguesses resettes", wrongGuesses);
 
   }
 
 
-
-  const checkChar = () => {
+  const handleGuess = () => {
 
     //store the value of the guess input field
     guess = guessInputRef.current.value;
-
-    //Store the ref's to the span tag show the letter (if it is correct)
-    correctLetter = correctLetterRef.current;
-
 
     for (let i = 0; i < word.length; i++) {
 
       if (word[i] === guess) {
         correctLetterRef.current[i].textContent = guess;
 
-        countCorrectGuess += 1;
 
         guessInputRef.current.value = "";
+        countCorrectGuess += 1;
+        winCheck();
+
       }
 
     }
@@ -90,22 +100,17 @@ function App() {
       setWrongGuesses(current => [...current, guess]);
       guessInputRef.current.value = "";
     }
-    else {
-      winCheck();
-    }
   }
 
   const checkKeyPressed = (event) => {
 
     if (event.key === "Enter") {
       event.preventDefault();
-      checkChar();
+      handleGuess();
     }
   }
 
-
   useEffect(() => {
-
 
     setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
 
@@ -168,19 +173,22 @@ function App() {
 
 
 
-        {/* <Row>
+        <Row>
           <Col>
             <canvas id="game" />
           </Col>
-        </Row> */}
+        </Row>
 
         {/* Delete when development is done  */}
-        <Row>
-          <Col>
-            <label id="wrongGuessesLabel">Word to guess: </label>
-            <p id="wrongGuesses">{word}</p>
-          </Col>
-        </Row>
+        {
+          isGameOver ? (<Row>
+            <Col>
+              <button id="playAgain" onClick={() => resetGame(true)}>Play Again</button>
+            </Col>
+          </Row>) : ""
+
+        }
+
 
         {/* Wrong guesses */}
         <Row>
