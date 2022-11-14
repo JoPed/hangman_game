@@ -21,8 +21,6 @@ function App() {
 
   const guessInputRef = useRef();
 
-  const correctLetterRef = useRef([]);
-
   let guess = "";
 
   let countCorrectGuess = 0;
@@ -39,34 +37,17 @@ function App() {
 
   const resetGame = (setNewWord) => {
 
-    setIsGameOver(false);
+    console.log(setNewWord);
 
-    if (setNewWord) {
-      setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
+    if(setNewWord){
+      console.log("run tjek")
+      setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);  
+
     }
 
-
-    countCorrectGuess = 0;
-    guessInputRef.current.value = "";
-
-
-    console.log("correctLetterRef før reset",correctLetterRef.current);
-
-
-    correctLetterRef.current.forEach((char, index) => {
-
-      correctLetterRef = {};
-      console.log(correctLetterRef);
-      char.textContent = "";
-
-    });
-
-    console.log("correctLetterRef efter reset",correctLetterRef.current);
-
-
     setWrongGuesses([]);
-    // console.log("setwrongguesses resettes", wrongGuesses);
 
+    setIsGameOver(false);
   }
 
 
@@ -78,7 +59,7 @@ function App() {
     for (let i = 0; i < word.length; i++) {
 
       if (word[i] === guess) {
-        correctLetterRef.current[i].textContent = guess;
+        // newRef.current[i].innerHTML = guess;
 
 
         guessInputRef.current.value = "";
@@ -162,7 +143,7 @@ function App() {
               {word ? (word.split("").map((character, index) => (
 
                 <span className={character === " " ? "guessLines hideLine" : "guessLines"} key={`line${index}`}>
-                  <span className="correctLetter" ref={ref => (correctLetterRef.current[index] = ref)} data-index={index}></span>
+                  <span className="correctLetter" data-index={index}></span>
                 </span>
 
               ))) : ""}
@@ -183,7 +164,7 @@ function App() {
         {
           isGameOver ? (<Row>
             <Col>
-              <button id="playAgain" onClick={() => resetGame(true)}>Play Again</button>
+              <button id="playAgain" onClick={handleClick}>Play Again</button>
             </Col>
           </Row>) : ""
 
