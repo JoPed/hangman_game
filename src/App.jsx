@@ -8,15 +8,24 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import FormText from 'react-bootstrap/FormText';
 
 import { useEffect, useState, useRef } from 'react';
-import { wordsToGuess } from './assets/wordsToGuess';
+import { wordsToGuess } from './assets/WordsToGuess';
+
+function useArrayRef() {
+  const refs = []
+  return [refs, el => el && refs.push(el)];
+}
 
 function App() {
 
-  const [word, setWord] = useState();
+  const [word, setWord] = useState(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
 
   const [wrongGuesses, setWrongGuesses] = useState([]);
 
-  const [isGameOver, setIsGameOver] = useState(false)
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  const [spacesInWord, setSpacesInWord] = useState(0);
+
+  const [correctLetterRef, setCorrectLetterRef] = useArrayRef();
 
 
   const guessInputRef = useRef();
@@ -30,24 +39,27 @@ function App() {
     console.log("countCorrectGuess", countCorrectGuess);
     console.log("word length", word.length);
 
-    if (countCorrectGuess === word.length) {
+    //*account for multiple words, seperated with space.   
+    if (countCorrectGuess === word.length - spacesInWord) {
       setIsGameOver(true);
     }
+
   }
 
-  const resetGame = (setNewWord) => {
+  const resetGame = () => {
 
-    console.log(setNewWord);
+    correctLetterRef.forEach(ref => ref.innerHTML = "");   
 
-    if(setNewWord){
-      console.log("run tjek")
-      setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);  
 
-    }
+    setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
+
+    console.log(wordsToGuess);
 
     setWrongGuesses([]);
 
     setIsGameOver(false);
+
+    guessInputRef.current.focus();
   }
 
 
@@ -59,8 +71,7 @@ function App() {
     for (let i = 0; i < word.length; i++) {
 
       if (word[i] === guess) {
-        // newRef.current[i].innerHTML = guess;
-
+        correctLetterRef[i].innerHTML = guess;
 
         guessInputRef.current.value = "";
         countCorrectGuess += 1;
@@ -93,13 +104,9 @@ function App() {
 
   useEffect(() => {
 
-    setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
+    setSpacesInWord(word.split(' ').length - 1);
 
-    return () => {
-      resetGame(false);
-    }
-
-  }, []);
+  }, [correctLetterRef]);
 
   return (
     <Container fluid="lg" className="mainContainer">
@@ -111,8 +118,7 @@ function App() {
       {/* Game description */}
       <Row>
         <Col>
-          <p id="game_description">Game can be played as a one or two player game. <br /> Player has 10 guesses. <br /> 1 player: a webdevelopment related word will be chosen.<br />
-            2 player: one player will type in a word that the other player has to guess.<br /> Press enter to make guess.
+          <p id="game_description">Game can be played as a one or two player game. <br /> Player has 10 guesses. <br /> Every word is related to webdevelopment.<br /> Press enter to make guess.
           </p>
         </Col>
       </Row>
@@ -143,7 +149,7 @@ function App() {
               {word ? (word.split("").map((character, index) => (
 
                 <span className={character === " " ? "guessLines hideLine" : "guessLines"} key={`line${index}`}>
-                  <span className="correctLetter" data-index={index}></span>
+                  <span className="correctLetter" data-index={index} ref={setCorrectLetterRef}></span>
                 </span>
 
               ))) : ""}
@@ -164,7 +170,7 @@ function App() {
         {
           isGameOver ? (<Row>
             <Col>
-              <button id="playAgain" onClick={handleClick}>Play Again</button>
+              <button id="playAgain" onClick={resetGame}>Play Again</button>
             </Col>
           </Row>) : ""
 

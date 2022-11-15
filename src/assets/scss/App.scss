@@ -6,6 +6,8 @@
 html {
     box-sizing: border-box;
     font-family: Tahoma, Geneva, Verdana, sans-serif;
+    
+    background-color: #F28705;
 }
 
 *,
@@ -30,10 +32,6 @@ p, label {
 }
 
 /* #endregion */
-
-.mainContainer {
-    background-color: #F28705;
-}
 
 #game_description {
     text-align: center;
