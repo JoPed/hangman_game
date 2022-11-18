@@ -25,41 +25,51 @@ function App() {
 
   const [spacesInWord, setSpacesInWord] = useState(0);
 
+  const [countCorrectGuess, setCountCorrectGuess] = useState(0);
+
+  const [prevGuess, setPrevGuess] = useState([]);
+
+  const [guessesLeft, setGuessesLeft] = useState(10);
+
   const [correctLetterRef, setCorrectLetterRef] = useArrayRef();
 
 
   const guessInputRef = useRef();
 
+  const inputErrorRef = useRef();
+
   let guess = "";
 
-  let countCorrectGuess = 0;
-
   const winCheck = () => {
-
-    console.log("countCorrectGuess", countCorrectGuess);
+    console.log("score", countCorrectGuess);
     console.log("word length", word.length);
+    console.log("space in word", spacesInWord)
 
     //*account for multiple words, seperated with space.   
     if (countCorrectGuess === word.length - spacesInWord) {
       setIsGameOver(true);
+      guessInputRef.current.disabled = true;
     }
 
   }
 
   const resetGame = () => {
 
-    correctLetterRef.forEach(ref => ref.innerHTML = "");   
-
+    correctLetterRef.forEach(ref => ref.innerHTML = "");
 
     setWord(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
-
-    console.log(wordsToGuess);
 
     setWrongGuesses([]);
 
     setIsGameOver(false);
 
+    setCountCorrectGuess(0);
+
+    setPrevGuess([]);
+
     guessInputRef.current.focus();
+
+    guessInputRef.current.disabled = false;
   }
 
 
@@ -68,15 +78,27 @@ function App() {
     //store the value of the guess input field
     guess = guessInputRef.current.value;
 
+    if (guess.length !== 1) {
+      console.log("only one letter at a time")
+      inputErrorRef.current.textContent = "Only one letter at a time";
+    }
+    else {
+      inputErrorRef.current.textContent = "";
+    }
+
+    console.log("prevGuess", prevGuess);
+
     for (let i = 0; i < word.length; i++) {
 
-      if (word[i] === guess) {
+      if (word[i] === guess && !prevGuess.includes(guess)) {
+
         correctLetterRef[i].innerHTML = guess;
 
         guessInputRef.current.value = "";
-        countCorrectGuess += 1;
-        winCheck();
 
+        setCountCorrectGuess(currentValue => { return currentValue + 1 });
+
+        setPrevGuess(prev => [...prev, guess]);
       }
 
     }
@@ -91,22 +113,48 @@ function App() {
       //Setting the usestate array. It is not possible to use .push when working with useStates
       setWrongGuesses(current => [...current, guess]);
       guessInputRef.current.value = "";
+
+      setGuessesLeft(currentValue => {return currentValue - 1});
+
+
     }
   }
 
-  const checkKeyPressed = (event) => {
+  const handleUserInput = (event) => {
 
-    if (event.key === "Enter") {
+    if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
       handleGuess();
     }
   }
 
+  
   useEffect(() => {
 
+    winCheck();
+
+    console.log("guessesLeft",guessesLeft);
+
+    if(guessesLeft <= 0){
+      setIsGameOver(true);
+
+      guessInputRef.current.disabled = true;
+    }
+
+  }, [countCorrectGuess, guessesLeft])
+
+
+  useEffect(() => {
+
+    guessInputRef.current.focus();
+
+    console.log("mounted");
     setSpacesInWord(word.split(' ').length - 1);
 
+
   }, [correctLetterRef]);
+
+
 
   return (
     <Container fluid="lg" className="mainContainer">
@@ -118,7 +166,7 @@ function App() {
       {/* Game description */}
       <Row>
         <Col>
-          <p id="game_description">Game can be played as a one or two player game. <br /> Player has 10 guesses. <br /> Every word is related to webdevelopment.<br /> Press enter to make guess.
+          <p id="game_description">Game can be played as a one or two player game. <br /> Player has 10 lives. Minus 1 life for every wrong guess. <br /> Every word is related to webdevelopment.<br /> Press Enter or "Submit" to make guess.
           </p>
         </Col>
       </Row>
@@ -128,10 +176,30 @@ function App() {
 
         <form>
           <FormGroup>
-            <Row>
+            <Row className="mb-3">
               <Col>
                 <label id="labelGuess">Guess (only one letter at a time)</label>
-                <input type="text" id="inputGuess" ref={guessInputRef} onKeyDown={checkKeyPressed} required />
+                <Row>
+                  <Col className="d-flex flex-row justify-content-center">
+                    <input type="text" id="inputGuess" ref={guessInputRef} onKeyDown={handleUserInput} />
+
+                    {
+                      isGameOver ? <button id="playAgain" onClick={resetGame}>Play Again</button>
+                        : <button onClick={handleUserInput} id="btnSubmit">Submit</button>
+
+                    }
+
+
+
+                  </Col>
+
+                </Row>
+
+                {/* text content get updated in handleGuess */}
+                <FormText ref={inputErrorRef} id="errorText">
+
+                </FormText>
+
               </Col>
             </Row>
           </FormGroup>
@@ -139,8 +207,6 @@ function App() {
         </form>
 
         {/* Guesses */}
-
-
         {/* making the guess lines / wordholder plus the letters on top of the lines */}
         <Row >
           <Col>
@@ -159,23 +225,11 @@ function App() {
         </Row>
 
 
-
         <Row>
           <Col>
             <canvas id="game" />
           </Col>
         </Row>
-
-        {/* Delete when development is done  */}
-        {
-          isGameOver ? (<Row>
-            <Col>
-              <button id="playAgain" onClick={resetGame}>Play Again</button>
-            </Col>
-          </Row>) : ""
-
-        }
-
 
         {/* Wrong guesses */}
         <Row>
