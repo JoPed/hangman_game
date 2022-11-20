@@ -1,13 +1,15 @@
 //* colors
 
-$orange: #F28705;
-$white: #F2F2F0;
+$black: #0f0e11;
+$white: #F3F3F4;
 $brown: #A67153;
+$orange: #F28705;
 
 
 $col_text: $white;
-$col_btn--Hover: rgba($brown, .5);
-$col_input--Box_Shadow: rgba($brown, .5);
-$col_input--Border: $brown;
-$col_input--Disabled--Bg_color: rgba($white, .2);
+$col_btn--Hover: rgba($white, .2);
+$col_input--Box_Shadow: rgba($orange, .5);
+$col_input--Border: $orange;
+$col_input--Disabled--Bg_color: rgba($white, .15);
 $col_border: $white;
+$col_main--Background: $black;

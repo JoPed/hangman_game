@@ -2,13 +2,18 @@ import 'bootstrap/dist/css/bootstrap-grid.min.css';
 import './assets/scss/App.scss'
 
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import FormGroup from 'react-bootstrap/FormGroup';
-import FormText from 'react-bootstrap/FormText';
 
 import { useEffect, useState, useRef } from 'react';
+
 import { wordsToGuess } from './assets/WordsToGuess';
+import { drawArray, clearCanvas } from './assets/DrawFunctions';
+
+import Canvas from './assets/components/Canvas';
+import Description from './assets/components/Description';
+import UserInput from './assets/components/UserInput';
+import Word from './assets/components/Word';
+import WrongGuesses from './assets/components/WrongGuesses';
+
 
 function useArrayRef() {
   const refs = []
@@ -29,21 +34,24 @@ function App() {
 
   const [prevGuess, setPrevGuess] = useState([]);
 
-  const [guessesLeft, setGuessesLeft] = useState(10);
+  const guessesLeft = useRef(10);
+
 
   const [correctLetterRef, setCorrectLetterRef] = useArrayRef();
 
+  const canvasRef = useRef();
 
   const guessInputRef = useRef();
 
   const inputErrorRef = useRef();
 
+  const clearCanvasRef = useRef(false);
+
   let guess = "";
 
+
+
   const winCheck = () => {
-    console.log("score", countCorrectGuess);
-    console.log("word length", word.length);
-    console.log("space in word", spacesInWord)
 
     //*account for multiple words, seperated with space.   
     if (countCorrectGuess === word.length - spacesInWord) {
@@ -53,7 +61,9 @@ function App() {
 
   }
 
-  const resetGame = () => {
+  const resetGame = (event) => {
+
+    event.preventDefault();
 
     correctLetterRef.forEach(ref => ref.innerHTML = "");
 
@@ -67,11 +77,19 @@ function App() {
 
     setPrevGuess([]);
 
+    guessesLeft.current = 10;
+
     guessInputRef.current.focus();
 
     guessInputRef.current.disabled = false;
-  }
 
+    // clearCanvasRef.current = true;
+
+    clearCanvas();
+
+    
+
+  }
 
   const handleGuess = () => {
 
@@ -79,14 +97,11 @@ function App() {
     guess = guessInputRef.current.value;
 
     if (guess.length !== 1) {
-      console.log("only one letter at a time")
       inputErrorRef.current.textContent = "Only one letter at a time";
     }
     else {
       inputErrorRef.current.textContent = "";
     }
-
-    console.log("prevGuess", prevGuess);
 
     for (let i = 0; i < word.length; i++) {
 
@@ -112,11 +127,12 @@ function App() {
 
       //Setting the usestate array. It is not possible to use .push when working with useStates
       setWrongGuesses(current => [...current, guess]);
+
       guessInputRef.current.value = "";
 
-      setGuessesLeft(currentValue => {return currentValue - 1});
+      guessesLeft.current -= 1;
 
-
+      draw();
     }
   }
 
@@ -128,27 +144,29 @@ function App() {
     }
   }
 
-  
+  const draw = () => {
+    drawArray[guessesLeft.current](canvasRef.current.getContext('2d'));
+
+  }
+
+
   useEffect(() => {
 
     winCheck();
 
-    console.log("guessesLeft",guessesLeft);
-
-    if(guessesLeft <= 0){
+    if (guessesLeft.current <= 0) {
       setIsGameOver(true);
 
       guessInputRef.current.disabled = true;
     }
 
-  }, [countCorrectGuess, guessesLeft])
+  }, [countCorrectGuess, guessesLeft.current])
 
 
   useEffect(() => {
 
     guessInputRef.current.focus();
 
-    console.log("mounted");
     setSpacesInWord(word.split(' ').length - 1);
 
 
@@ -159,90 +177,33 @@ function App() {
   return (
     <Container fluid="lg" className="mainContainer">
 
-      <Row>
-        <Col><h1>Hangman</h1></Col>
-      </Row>
-
-      {/* Game description */}
-      <Row>
-        <Col>
-          <p id="game_description">Game can be played as a one or two player game. <br /> Player has 10 lives. Minus 1 life for every wrong guess. <br /> Every word is related to webdevelopment.<br /> Press Enter or "Submit" to make guess.
-          </p>
-        </Col>
-      </Row>
+      <Description />
 
       {/* Game container  */}
       <Container fluid="md" className="gameContainer">
 
-        <form>
-          <FormGroup>
-            <Row className="mb-3">
-              <Col>
-                <label id="labelGuess">Guess (only one letter at a time)</label>
-                <Row>
-                  <Col className="d-flex flex-row justify-content-center">
-                    <input type="text" id="inputGuess" ref={guessInputRef} onKeyDown={handleUserInput} />
-
-                    {
-                      isGameOver ? <button id="playAgain" onClick={resetGame}>Play Again</button>
-                        : <button onClick={handleUserInput} id="btnSubmit">Submit</button>
-
-                    }
-
-
-
-                  </Col>
-
-                </Row>
-
-                {/* text content get updated in handleGuess */}
-                <FormText ref={inputErrorRef} id="errorText">
-
-                </FormText>
-
-              </Col>
-            </Row>
-          </FormGroup>
-
-        </form>
+        <UserInput
+          isGameOver={isGameOver}
+          handleUserInput={handleUserInput}
+          guessInputRef={guessInputRef}
+          inputErrorRef={inputErrorRef}
+          resetGame={resetGame}
+        />
 
         {/* Guesses */}
         {/* making the guess lines / wordholder plus the letters on top of the lines */}
-        <Row >
-          <Col>
+        <Word
+          word={word}
+          setCorrectLetterRef={setCorrectLetterRef}
+        />
 
-            <div>
-              {word ? (word.split("").map((character, index) => (
-
-                <span className={character === " " ? "guessLines hideLine" : "guessLines"} key={`line${index}`}>
-                  <span className="correctLetter" data-index={index} ref={setCorrectLetterRef}></span>
-                </span>
-
-              ))) : ""}
-            </div>
-
-          </Col>
-        </Row>
-
-
-        <Row>
-          <Col>
-            <canvas id="game" />
-          </Col>
-        </Row>
+        <Canvas
+          canvasRef={canvasRef}
+          clearCanvasRef={clearCanvasRef}
+        />
 
         {/* Wrong guesses */}
-        <Row>
-          <Col>
-            <label id="wrongGuessesLabel">Wrong guesses: </label>
-            <p id="wrongGuesses">
-
-              {wrongGuesses.map(char => char + " ")}
-
-            </p>
-          </Col>
-        </Row>
-
+        <WrongGuesses wrongGuesses={wrongGuesses} />
 
       </Container>
 
