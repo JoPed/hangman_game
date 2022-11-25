@@ -7,15 +7,9 @@ const Canvas = ({canvasRef, clearCanvasRef }) => {
     useEffect(() => {
 
         const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
 
         canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-
-        // if(clearCanvasRef.current){
-        //     context.clearRect(0,0, canvas.width, canvas.height);
-        //     clearCanvasRef.current = false;
-        // }
+        canvas.height = canvas.offsetHeight;        
 
     }, [clearCanvasRef]);
 

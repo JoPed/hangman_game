@@ -12,7 +12,6 @@ import Canvas from './assets/components/Canvas';
 import Description from './assets/components/Description';
 import UserInput from './assets/components/UserInput';
 import Word from './assets/components/Word';
-import WrongGuesses from './assets/components/WrongGuesses';
 
 
 function useArrayRef() {
@@ -22,39 +21,53 @@ function useArrayRef() {
 
 function App() {
 
+  // Selected word
   const [word, setWord] = useState(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
 
+  // Array of wrong guesses
   const [wrongGuesses, setWrongGuesses] = useState([]);
 
+  // Check if game is over
   const [isGameOver, setIsGameOver] = useState(false);
 
+  // number of spaces in a word - used to handle correctguesses if word has spaces
   const [spacesInWord, setSpacesInWord] = useState(0);
 
-  const [countCorrectGuess, setCountCorrectGuess] = useState(0);
+  // Player score
+  const [playerScore, setPlayerScore] = useState(0);
 
+  // Array of previous guesses. Player get not get points or lose extra lifes if guess is the same as previous
   const [prevGuess, setPrevGuess] = useState([]);
 
-  const guessesLeft = useRef(10);
+  // Player lives
+  const playerLives = useRef(10);
 
-
+  // A ref to the every correct letter shown above the '-'
   const [correctLetterRef, setCorrectLetterRef] = useArrayRef();
 
+  // A ref to the canvas
   const canvasRef = useRef();
 
+  // A ref to the context
+  const context = useRef();
+
+  // A ref to the input field where users type their guess
   const guessInputRef = useRef();
 
+  // A ref to the FormText containing any error message
   const inputErrorRef = useRef();
 
+  // A boolean checking the canvas should clear (when gameover)
   const clearCanvasRef = useRef(false);
 
+  // Storing the current guess / value of input field.
   let guess = "";
-
 
 
   const winCheck = () => {
 
     //*account for multiple words, seperated with space.   
-    if (countCorrectGuess === word.length - spacesInWord) {
+    if (playerScore === word.length - spacesInWord) {
       setIsGameOver(true);
       guessInputRef.current.disabled = true;
     }
@@ -73,45 +86,51 @@ function App() {
 
     setIsGameOver(false);
 
-    setCountCorrectGuess(0);
+    setPlayerScore(0);
 
     setPrevGuess([]);
 
-    guessesLeft.current = 10;
+    playerLives.current = 10;
 
     guessInputRef.current.focus();
 
     guessInputRef.current.disabled = false;
 
-    // clearCanvasRef.current = true;
-
     clearCanvas();
 
-    
+
 
   }
 
+  // Handle what happens when a guess has been made
   const handleGuess = () => {
 
     //store the value of the guess input field
     guess = guessInputRef.current.value;
 
+    // Error check
     if (guess.length !== 1) {
       inputErrorRef.current.textContent = "Only one letter at a time";
+    }
+    else if(guess.length === 0){
+      inputErrorRef.current.textContent = "You have to type a letter between a-z";
     }
     else {
       inputErrorRef.current.textContent = "";
     }
 
+    // Loop though the selected word
     for (let i = 0; i < word.length; i++) {
 
+      // If the guessed letter matched at least one letter of the selected word 
+      // and the guess hasn't previous been made
       if (word[i] === guess && !prevGuess.includes(guess)) {
 
         correctLetterRef[i].innerHTML = guess;
 
         guessInputRef.current.value = "";
 
-        setCountCorrectGuess(currentValue => { return currentValue + 1 });
+        setPlayerScore(currentValue => { return currentValue + 1 });
 
         setPrevGuess(prev => [...prev, guess]);
       }
@@ -120,22 +139,22 @@ function App() {
 
     /*Check the selected word for the guessed value. 
     If not the guessed value is present in the selected word, the value of checkWrongGuess will be -1*/
-
     let checkWrongGuess = word.indexOf(guess);
 
     if (checkWrongGuess === -1) {
 
       //Setting the usestate array. It is not possible to use .push when working with useStates
-      setWrongGuesses(current => [...current, guess]);
+      setWrongGuesses(current => [...current,' ' + guess]);
 
       guessInputRef.current.value = "";
 
-      guessesLeft.current -= 1;
+      playerLives.current -= 1;
 
       draw();
     }
   }
 
+  // Check if key="enter" or the submit button has been pressed.
   const handleUserInput = (event) => {
 
     if (event.key === "Enter" || event.type === "click") {
@@ -144,26 +163,42 @@ function App() {
     }
   }
 
+  // Call the draw functions depending on lives left.
   const draw = () => {
-    drawArray[guessesLeft.current](canvasRef.current.getContext('2d'));
-
+    drawArray[playerLives.current](canvasRef.current.getContext('2d'));
   }
 
+  // Draw the wrong letter to the canvas
+  const drawWrongGuesses = () => {
+    let wrongGuessesText = "Wrong guesses: ";
+    context.current.fillText(wrongGuessesText, 10, 25);
 
+    let wrongGuessesTextLength = context.current.measureText(wrongGuessesText);
+
+    context.current.fillText(wrongGuesses, wrongGuessesTextLength.width, 25)
+  }
+
+  // Update this every time state playerscore and/or playerLives.current changes
   useEffect(() => {
+
+    context.current = canvasRef.current.getContext('2d');
+    context.current.font = "20px Tahoma";
+    context.current.fillStyle = "white";
 
     winCheck();
 
-    if (guessesLeft.current <= 0) {
+    if (playerLives.current <= 0) {
       setIsGameOver(true);
 
       guessInputRef.current.disabled = true;
     }
 
-  }, [countCorrectGuess, guessesLeft.current])
+    drawWrongGuesses();
 
+  }, [playerScore, playerLives.current])
 
-  useEffect(() => {
+  //Update this every time the refArray correctLetterRef changes. 
+  useEffect(() => {    
 
     guessInputRef.current.focus();
 
@@ -200,10 +235,8 @@ function App() {
         <Canvas
           canvasRef={canvasRef}
           clearCanvasRef={clearCanvasRef}
+          wrongGuesses={wrongGuesses}
         />
-
-        {/* Wrong guesses */}
-        <WrongGuesses wrongGuesses={wrongGuesses} />
 
       </Container>
 
