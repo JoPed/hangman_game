@@ -1,0 +1,26 @@
+@import "variables";
+
+.notification{
+    width: 200px;
+    padding: 20px;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    top:-15px;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 1px 3px 5px rgba($orange, .5);
+    background-color: $col_notification_background;
+    text-align: center;
+    color: $col_text;
+    text-transform: capitalize;
+    transition: all .2s;
+
+    span{
+        font-weight: 600;
+    }
+
+}
+
+.notification.active{
+    transform: translate(-50%, 0);    
+}

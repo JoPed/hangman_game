@@ -13,7 +13,7 @@ const UserInput = ({ isGameOver, handleUserInput, guessInputRef, inputErrorRef, 
                         <label id="labelGuess">Guess (only one letter at a time)</label>
                         <Row>
                             <Col className="d-flex flex-row justify-content-center">
-                                <input type="text" id="inputGuess" ref={guessInputRef} onKeyDown={handleUserInput} />
+                                <input type="text" id="inputGuess" ref={guessInputRef} onKeyDown={handleUserInput} onChange={() => inputErrorRef.current.textContent = ""} />
 
                                 {
                                     isGameOver ? <button id="playAgain" onClick={resetGame}>Play Again</button>
