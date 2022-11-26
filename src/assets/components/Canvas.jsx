@@ -28,6 +28,7 @@ const Canvas = ({canvasRef, clearCanvasRef }) => {
     return (
         <Row>
             <Col xs={12} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}} className="px-0">
+                <p>{window.devicePixelRatio}</p>
                 <canvas ref={canvasRef} id="game" />
             </Col>
         </Row>

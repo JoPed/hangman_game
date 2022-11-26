@@ -120,7 +120,7 @@ function App() {
       inputErrorRef.current.textContent = "Only one letter at a time";
       return;
     }
-    else if(guess.length === 0 || guess === " "){
+    else if (guess.length === 0 || guess === " ") {
       inputErrorRef.current.textContent = "You have to type a letter between a-z";
       return;
     }
@@ -151,10 +151,10 @@ function App() {
     console.log(!wrongGuesses.includes(guess));
 
     // Adding the ' ' to this check since the empty string is added to the guess on line 159
-    if (checkWrongGuess === -1 && !wrongGuesses.includes(' '+guess)) {
+    if (checkWrongGuess === -1 && !wrongGuesses.includes(' ' + guess)) {
 
       //Setting the usestate array. It is not possible to use .push when working with useStates
-      setWrongGuesses(current => [...current,' ' + guess]);
+      setWrongGuesses(current => [...current, ' ' + guess]);
 
       guessInputRef.current.value = "";
 
@@ -162,11 +162,11 @@ function App() {
 
       draw();
     }
-    else if(wrongGuesses.includes(' '+guess)){
+    else if (wrongGuesses.includes(' ' + guess)) {
       inputErrorRef.current.textContent = "You already guessed that letter";
     }
 
-    
+
   }
 
   // Check if key="enter" or the submit button has been pressed.
@@ -185,22 +185,20 @@ function App() {
 
   // Draw the wrong letter to the canvas
   const drawWrongGuesses = () => {
-    let wrongGuessesText = "Wrong guesses: ";
-    context.current.fillText(wrongGuessesText, 10, 35);
 
-    const upperCaseArray = wrongGuesses.map(w  => w.toUpperCase());
+    const upperCaseArray = wrongGuesses.map(w => w.toUpperCase());
 
-    context.current.fillText(upperCaseArray, 10, 100);
+    context.current.fillText(upperCaseArray, 10, 50);
   }
 
   // Update this every time state playerscore and/or playerLives.current changes
   useEffect(() => {
-
+    let wrongGuessesText = "Wrong guesses: ";
     context.current = canvasRef.current.getContext('2d');
-    context.current.font = "40px Source Code Pro, sans-serif";
     context.current.fillStyle = "white";
 
-    console.log(wrongGuesses);
+    context.current.font = "30px Source Code Pro, sans-serif";
+    context.current.fillText(wrongGuessesText, 10, 25);
 
     winCheck();
 
@@ -216,7 +214,7 @@ function App() {
   }, [playerScore, playerLives.current])
 
   //Update this every time the refArray correctLetterRef changes. 
-  useEffect(() => {    
+  useEffect(() => {
 
     guessInputRef.current.focus();
 
