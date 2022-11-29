@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import context from "react-bootstrap/esm/AccordionContext";
 
-const Canvas = ({canvasRef, clearCanvasRef }) => {   
-    
-      const setUpCanvas = (canvas) => {
+const Canvas = ({ canvasRef, clearCanvasRef }) => {
 
-       const {width, height} = canvas.getBoundingClientRect();
+    const setUpCanvas = (canvas) => {
+
+        const { width, height } = canvas.getBoundingClientRect();
 
         const scale = window.devicePixelRatio;
 
@@ -17,8 +18,8 @@ const Canvas = ({canvasRef, clearCanvasRef }) => {
 
     useEffect(() => {
 
-        const canvas = canvasRef.current;    
-        
+        const canvas = canvasRef.current;
+
         setUpCanvas(canvas);
 
     }, [clearCanvasRef]);
@@ -27,7 +28,7 @@ const Canvas = ({canvasRef, clearCanvasRef }) => {
 
     return (
         <Row>
-            <Col xs={12} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}} className="px-0">
+            <Col xs={12} md={{ span: 10, offset: 1 }} lg={{ span: 6, offset: 3 }} className="px-0">
                 <p>{window.devicePixelRatio}</p>
                 <canvas ref={canvasRef} id="game" />
             </Col>

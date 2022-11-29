@@ -148,13 +148,11 @@ function App() {
     If not the guessed value is present in the selected word, the value of checkWrongGuess will be -1*/
     let checkWrongGuess = word.indexOf(guess);
 
-    console.log(!wrongGuesses.includes(guess));
-
     // Adding the ' ' to this check since the empty string is added to the guess on line 159
     if (checkWrongGuess === -1 && !wrongGuesses.includes(' ' + guess)) {
 
       //Setting the usestate array. It is not possible to use .push when working with useStates
-      setWrongGuesses(current => [...current, ' ' + guess]);
+      setWrongGuesses(current => [...current, ' ' +  guess]);
 
       guessInputRef.current.value = "";
 
@@ -186,9 +184,9 @@ function App() {
   // Draw the wrong letter to the canvas
   const drawWrongGuesses = () => {
 
-    const upperCaseArray = wrongGuesses.map(w => w.toUpperCase());
+    const upperCaseArray = wrongGuesses.map(w => w.toUpperCase());      
 
-    context.current.fillText(upperCaseArray, 10, 50);
+    context.current.fillText(upperCaseArray, 10, 70);
   }
 
   // Update this every time state playerscore and/or playerLives.current changes

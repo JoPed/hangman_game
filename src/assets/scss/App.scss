@@ -69,6 +69,7 @@ label {
     color: $col_text;
     font-weight: 500;
 }
+
 /* #endregion */
 
 
@@ -104,10 +105,6 @@ label {
     appearance: none;
     border-radius: 4px;
     cursor: pointer;
-
-    &:hover {
-        background-color: $col_btn--Hover;
-    }
 }
 
 #btnSubmit {
@@ -165,8 +162,6 @@ label {
 
 /* #endregion */
 
-
-
 #game {
     margin-top: 15px;
     width: 100%;
@@ -176,8 +171,17 @@ label {
 
 @media only screen and (max-width: 767px) {
 
-    .guessLines{
+    .guessLines {
         width: 10px;
     }
-    
+
+}
+
+@media(hover: hover) and (pointer: fine) {
+
+    #playAgain:hover,
+    #btnSubmit:hover {
+        background-color: $col_btn--Hover;
+    }
+
 }
