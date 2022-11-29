@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 
 import { useEffect, useState, useRef } from 'react';
 
-import { wordsToGuess } from './assets/WordsToGuess';
+import { wordsToGuess } from './assets/wordsToGuess';
 import { drawArray, clearCanvas } from './assets/DrawFunctions';
 
 import Canvas from './assets/components/Canvas';
