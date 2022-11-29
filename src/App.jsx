@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 
 import { useEffect, useState, useRef } from 'react';
 
-import { wordsToGuess } from './assets/wordsToGuess';
+import { wordsToGuess } from './assets/WordsToGuess';
 import { drawArray, clearCanvas } from './assets/DrawFunctions';
 
 import Canvas from './assets/components/Canvas';
@@ -23,8 +23,7 @@ function useArrayRef() {
 function App() {
 
   // Selected word
-  // const [word, setWord] = useState(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
-  const [word, setWord] = useState("meta tags");
+  const [word, setWord] = useState(wordsToGuess[Math.floor(Math.random() * wordsToGuess.length)]);
 
   // Array of wrong guesses
   const [wrongGuesses, setWrongGuesses] = useState([]);
