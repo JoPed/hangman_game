@@ -253,6 +253,8 @@ function App() {
 
         <Notification message={gameOverText} notificationRef={notificationRef} />
 
+        <footer id="mainFooter">Made by Jonas Bjørn Pedersen &copy;</footer>
+
       </Container>
 
     </Container>

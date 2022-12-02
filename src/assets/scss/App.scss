@@ -83,6 +83,7 @@ label {
     margin-top: 25px;
     text-align: center;
     padding-bottom: 12px;
+    position: relative;
 
     div {
         min-width: 100px;
@@ -168,6 +169,15 @@ label {
     height: 500px;
     border: 2px dashed $col_border;
 }
+
+//*Footer
+#mainFooter{
+    width: 100%;
+    background-color: transparent;
+    text-align: center;
+    margin-block: 2rem;
+    color: $col_text;
+  }
 
 @media only screen and (max-width: 767px) {
 
