@@ -45,7 +45,7 @@ function App() {
   // Player lives
   const playerLives = useRef(10);
 
-  // A ref to the every correct letter shown above the '-'
+  // A ref to every correct letter shown above the '-'
   const [correctLetterRef, setCorrectLetterRef] = useArrayRef();
 
   // A ref to the canvas
@@ -103,8 +103,6 @@ function App() {
     guessInputRef.current.disabled = false;
 
     clearCanvas();
-
-
 
   }
 
@@ -253,7 +251,7 @@ function App() {
 
         <Notification message={gameOverText} notificationRef={notificationRef} />
 
-        <footer id="mainFooter">Made by Jonas Bjørn Pedersen &copy;</footer>
+        <footer id="mainFooter">Made by Jonas Bjørn Pedersen</footer>
 
       </Container>
 
