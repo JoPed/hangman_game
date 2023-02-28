@@ -188,6 +188,8 @@ function App() {
 
   // Update this every time state playerscore and/or playerLives.current changes
   useEffect(() => {
+
+    console.log(correctLetterRef)
     let wrongGuessesText = "Wrong guesses: ";
     context.current = canvasRef.current.getContext('2d');
     context.current.fillStyle = "white";
@@ -246,7 +248,6 @@ function App() {
         <Canvas
           canvasRef={canvasRef}
           clearCanvasRef={clearCanvasRef}
-          wrongGuesses={wrongGuesses}
         />
 
         <Notification message={gameOverText} notificationRef={notificationRef} />

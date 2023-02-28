@@ -12,7 +12,7 @@ const Description = () => {
             {/* Game description */}
             <Row>
                 <Col>
-                    <p id="game_description">Game can be played as a one or two player game. <br /> Player has 10 lives. Minus 1 life for every wrong guess. <br /> Every word is related to webdevelopment.<br /> Press Enter or "Submit" to make guess.
+                    <p id="game_description">Player has 10 lives. Minus 1 life for every wrong guess. <br /> Every word is related to webdevelopment.<br /> Press Enter or "Submit" to make guess.
                     </p>
                 </Col>
             </Row>
